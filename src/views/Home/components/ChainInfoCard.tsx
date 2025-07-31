@@ -40,10 +40,12 @@ const InfoGridItem = ({ label, value, valueProps, ...gridItemProps }: InfoGridIt
 }
 
 type Props = {
+  blockNumber: number
   chainName: string
+  nodes: number
 }
 
-const ChainInfoCard = ({ chainName }: Props) => {
+const ChainInfoCard = ({ blockNumber, chainName, nodes }: Props) => {
   return (
     <Card.Root variant="elevated">
       <Card.Header
@@ -63,10 +65,10 @@ const ChainInfoCard = ({ chainName }: Props) => {
       <Card.Body>
         <Stack gap={6}>
           <SimpleGrid columns={{ base: 1, lg: 2 }} gap={2}>
-            <InfoGridItem label="Nodes" value={4} />
+            <InfoGridItem label="Nodes" value={nodes} />
             <InfoGridItem
               label="Block"
-              value={<SlideNumber autoIncrease cooldown={4000} size="lg" value={123123} />}
+              value={<SlideNumber autoIncrease cooldown={4000} size="lg" value={blockNumber} />}
               valueProps={{ color: "fg.warning" }}
             />
           </SimpleGrid>
