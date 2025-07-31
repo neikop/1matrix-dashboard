@@ -1,5 +1,5 @@
 {
-  "name": "kite-template",
+  "name": "1matrix-dashboard",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -28,6 +28,7 @@
     "react-infinite-scroller": "^1.2.6",
     "react-number-format": "^5.4.4",
     "react-router": "^7.5.2",
+    "recharts": "^3.1.0",
     "viem": "2.x",
     "wagmi": "^2.14.15",
     "zustand": "^5.0.3"
