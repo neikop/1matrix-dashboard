@@ -1,4 +1,18 @@
-import { Box, Button, Card, GridItem, GridItemProps, SimpleGrid, Stack, Text, TextProps } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  Card,
+  Center,
+  Flex,
+  GridItem,
+  GridItemProps,
+  Separator,
+  SimpleGrid,
+  Stack,
+  Text,
+  TextProps,
+} from "@chakra-ui/react"
+import { SlideNumber } from "components/common"
 import { PropsWithChildren, ReactNode } from "react"
 import { IoMdOpen } from "react-icons/io"
 
@@ -13,17 +27,23 @@ type InfoGridItemProps = {
 const InfoGridItem = ({ label, value, valueProps, ...gridItemProps }: InfoGridItemProps) => {
   return (
     <GridItem borderRadius={4} borderWidth={1} px={2} py={1} {...gridItemProps}>
-      <Stack gap={0}>
+      <Stack gap={0} h="full">
         <Text fontSize="sm">{label}</Text>
-        <Text color="fg.success" fontSize={40} fontWeight="bold" textAlign="center" {...valueProps}>
-          {value}
-        </Text>
+        <Center flex={1}>
+          <Text color="fg.success" fontSize={36} fontWeight="bold" textAlign="center" {...valueProps}>
+            {value}
+          </Text>
+        </Center>
       </Stack>
     </GridItem>
   )
 }
 
-const ChainInfoCard = () => {
+type Props = {
+  chainName: string
+}
+
+const ChainInfoCard = ({ chainName }: Props) => {
   return (
     <Card.Root variant="elevated">
       <Card.Header
@@ -34,7 +54,7 @@ const ChainInfoCard = () => {
         justifyContent="space-between"
         py={4}
       >
-        <Card.Title>ETH Testnet</Card.Title>
+        <Card.Title>{chainName}</Card.Title>
         <Button colorPalette="purple" variant="text">
           View
           <IoMdOpen />
@@ -42,61 +62,37 @@ const ChainInfoCard = () => {
       </Card.Header>
       <Card.Body>
         <Stack gap={6}>
-          <SimpleGrid columns={6} gap={2}>
-            <InfoGridItem colSpan={3} label="Nodes" value={4} />
-            <InfoGridItem colSpan={3} label="Block" value={12423123} valueProps={{ color: "fg.warning" }} />
-            <InfoGridItem colSpan={2} label="TPS" value={0} />
-            <InfoGridItem colSpan={2} label="Block Time (s)" value={"4.00"} />
-            <InfoGridItem colSpan={2} label="Finality Time (ms)" value={"350"} valueProps={{ color: "fg.warning" }} />
-
-            {/* <GridItem colSpan={3}>
-              <Stack>
-                <Text>Tx Processing</Text>
-                <SimpleGrid columns={4} gap={2}>
-                  <Stack>
-                    <Text>Label</Text>
-                    <Text>0</Text>
-                  </Stack>
-                  <Stack>
-                    <Text>Label</Text>
-                    <Text>0</Text>
-                  </Stack>
-                  <Stack>
-                    <Text>Label</Text>
-                    <Text>0</Text>
-                  </Stack>
-                  <Stack>
-                    <Text>Label</Text>
-                    <Text>0</Text>
-                  </Stack>
-                </SimpleGrid>
-              </Stack>
-              <Stack>
-                <Text>Tx Pending</Text>
-                <SimpleGrid columns={4} gap={2}>
-                  <Stack>
-                    <Text>Label</Text>
-                    <Text>0</Text>
-                  </Stack>
-                  <Stack>
-                    <Text>Label</Text>
-                    <Text>0</Text>
-                  </Stack>
-                  <Stack>
-                    <Text>Label</Text>
-                    <Text>0</Text>
-                  </Stack>
-                  <Stack>
-                    <Text>Label</Text>
-                    <Text>0</Text>
-                  </Stack>
-                </SimpleGrid>
-              </Stack>
-            </GridItem> */}
+          <SimpleGrid columns={{ base: 1, lg: 2 }} gap={2}>
+            <InfoGridItem label="Nodes" value={4} />
+            <InfoGridItem
+              label="Block"
+              value={<SlideNumber autoIncrease cooldown={4000} size="lg" value={123123} />}
+              valueProps={{ color: "fg.warning" }}
+            />
           </SimpleGrid>
-          <Box h={320}>
-            <InfoChart />
-          </Box>
+
+          <Stack>
+            <Flex alignItems="center" justifyContent="space-between">
+              <Text>TPS</Text>
+              <Text as="div" color="fg.success" fontSize="2xl">
+                <SlideNumber autoRandom cooldown={2500} value={4000} />
+              </Text>
+            </Flex>
+            <Separator />
+            <Flex alignItems="center" justifyContent="space-between">
+              <Text>Block Time (s)</Text>
+              <Text as="div" color="fg.success" fontSize="2xl">
+                4.00
+              </Text>
+            </Flex>
+            <Separator />
+            <Flex alignItems="center" justifyContent="space-between">
+              <Text>Finality Time (ms)</Text>
+              <Text as="div" color="fg.warning" fontSize="2xl">
+                <SlideNumber autoRandom cooldown={10000} value={350} />
+              </Text>
+            </Flex>
+          </Stack>
         </Stack>
       </Card.Body>
     </Card.Root>
