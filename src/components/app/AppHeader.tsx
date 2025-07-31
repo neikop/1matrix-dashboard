@@ -1,5 +1,4 @@
-import { Center, Flex, Image } from "@chakra-ui/react"
-import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { Avatar, Center, Flex, Image } from "@chakra-ui/react"
 import { AppSidebar } from "components/app"
 import { Link } from "react-router"
 import { privateRoute } from "routes"
@@ -17,7 +16,9 @@ const AppHeader = () => {
       </Flex>
 
       <Center smDown={{ bottom: 0, h: 16, left: 0, position: "fixed", right: 0, shadow: "sm" }}>
-        <ConnectButton />
+        <Avatar.Root>
+          <Avatar.Fallback name="1 Matrix" />
+        </Avatar.Root>
       </Center>
     </Flex>
   )

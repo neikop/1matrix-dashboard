@@ -40,7 +40,7 @@ const MenuItem = ({ linkProps, name, path }: MenuItemProps) => {
 const MenuItems = () => {
   return (
     <>
-      <MenuItem {...privateRoute.swap} />
+      <MenuItem {...privateRoute.home} />
     </>
   )
 }
