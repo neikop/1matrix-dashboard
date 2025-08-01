@@ -1,21 +1,17 @@
-export const shortenAddress = (address: Address | string = "", length: number = 4) => {
-  return `${address.slice(0, 2 + length)}...${address.slice(-length)}`
-}
-
-export const formatPrice = (price: number, options?: Intl.NumberFormatOptions) => {
-  return new Intl.NumberFormat("en-US", {
+export const formatPrice = (price?: number | string, options?: Intl.NumberFormatOptions) => {
+  const value = Number(price ?? 0)
+  return value.toLocaleString("en-US", {
     currency: "USD",
-    maximumFractionDigits: 4,
-    minimumFractionDigits: 2,
+    maximumFractionDigits: value > 1000 ? 0 : value > 10 ? 2 : 4,
     style: "currency",
     ...options,
-  }).format(price)
+  })
 }
 
-export const formatAmount = (price: number, options?: Intl.NumberFormatOptions) => {
-  return new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 18,
-    useGrouping: false,
-    ...options,
-  }).format(price)
+export const formatPriceWithIncrement = (price?: number | string, increment?: number | string) => {
+  const decimals = Math.abs(Math.log10(Number(increment ?? 1)))
+  return Number(price ?? 0).toLocaleString("en-US", {
+    maximumFractionDigits: decimals,
+    minimumFractionDigits: decimals,
+  })
 }

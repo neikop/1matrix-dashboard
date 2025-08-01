@@ -13,12 +13,11 @@ import {
   TextProps,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import { SlideNumber } from "components/common"
-import { PropsWithChildren, ReactNode } from "react"
+import { SlideNumber } from "components/SlideNumber"
+import { useGrafana } from "hooks/useGrafana"
+import { ReactNode } from "react"
 import { IoMdOpen } from "react-icons/io"
-import { grafanaService } from "services"
-
-import InfoChart from "./InfoChart"
+import { apiClient } from "services/clients"
 
 type InfoGridItemProps = {
   label?: ReactNode
@@ -32,7 +31,7 @@ const InfoGridItem = ({ label, value, valueProps, ...gridItemProps }: InfoGridIt
       <Stack gap={0} h="full">
         <Text fontSize="sm">{label}</Text>
         <Center flex={1}>
-          <Text color="fg.success" fontSize={36} fontWeight="bold" textAlign="center" {...valueProps}>
+          <Text as="div" color="fg.success" fontSize={36} fontWeight="bold" textAlign="center" {...valueProps}>
             {value}
           </Text>
         </Center>
@@ -44,30 +43,12 @@ const InfoGridItem = ({ label, value, valueProps, ...gridItemProps }: InfoGridIt
 type Props = {
   chainId: string
   chainName: string
-  dataCenters?: number
+  dataCenters?: number | string
 }
 
 const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
-  const { data } = useQuery({
-    initialData: {},
-    queryFn: () =>
-      grafanaService.query({
-        from: "1754016126566",
-        queries: [
-          {
-            datasource: {
-              type: "prometheus",
-              uid: "PBFA97CFB590B2093",
-            },
-            expr: `count(txpool_local{chain="${chainId}"})`,
-          },
-        ],
-        to: "1754037726566",
-      }),
-    queryKey: ["abc"],
-  })
-
-  console.log(data)
+  const data = useGrafana({ chainId })
+  console.log({ chainName, ...data })
 
   return (
     <Card.Root variant="elevated">
@@ -94,12 +75,12 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
       <Card.Body>
         <Stack gap={6}>
           <SimpleGrid columns={{ base: 1, lg: 4 }} gap={2}>
-            <InfoGridItem colSpan={1} label="Nodes" value={4} />
+            <InfoGridItem colSpan={1} label="Nodes" value={data.node} />
             <InfoGridItem colSpan={1} label="Data Centers" value={dataCenters} />
             <InfoGridItem
               colSpan={2}
               label="Block"
-              value={<SlideNumber autoIncrease cooldown={4000} size="lg" value={40000} />}
+              value={<SlideNumber size="lg" value={data.blocknumber} />}
               valueProps={{ color: "fg.warning" }}
             />
           </SimpleGrid>
@@ -108,21 +89,21 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
             <Flex alignItems="center" justifyContent="space-between">
               <Text>TPS</Text>
               <Text as="div" color="fg.success" fontSize="2xl">
-                <SlideNumber autoRandom cooldown={2500} value={4000} />
+                <SlideNumber value={data.tps} />
               </Text>
             </Flex>
             <Separator />
             <Flex alignItems="center" justifyContent="space-between">
               <Text>Block Time (s)</Text>
               <Text as="div" color="fg.success" fontSize="2xl">
-                4.00
+                {data.blocktime}
               </Text>
             </Flex>
             <Separator />
             <Flex alignItems="center" justifyContent="space-between">
               <Text>Finality Time (ms)</Text>
               <Text as="div" color="fg.warning" fontSize="2xl">
-                <SlideNumber autoRandom cooldown={10000} value={350} />
+                <SlideNumber value={data.finality} />
               </Text>
             </Flex>
           </Stack>

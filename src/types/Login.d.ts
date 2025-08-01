@@ -1,3 +1,0 @@
-type LoginResponse = {
-  username: string
-}

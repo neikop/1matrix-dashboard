@@ -1,20 +1,14 @@
 import axios from "axios"
-import { GRAFANA_API_KEY, GRAFANA_API_URL } from "config/env"
 
 const grafanaClient = axios.create({
-  baseURL: GRAFANA_API_URL,
+  baseURL: process.env.GRAFANA_API_URL,
   headers: {
-    Authorization: GRAFANA_API_KEY,
+    Authorization: process.env.GRAFANA_API_KEY,
   },
 })
-grafanaClient.interceptors.response.use(({ data }) => data.data)
+grafanaClient.interceptors.response.use(({ data }) => data)
 
-const query = (body?: any): Promise<unknown> =>
-  grafanaClient.post(`/api/ds/query`, body, {
-    fetchOptions: {
-      mode: "no-cors",
-    },
-  })
+const query = (body?: object): Promise<unknown> => grafanaClient.post(`/api/ds/query`, body)
 
 export const grafanaService = {
   query,

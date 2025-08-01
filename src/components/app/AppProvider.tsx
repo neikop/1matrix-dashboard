@@ -1,28 +1,28 @@
-import { ChakraProvider } from "@chakra-ui/react"
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit"
+"use client"
+import { ChakraProvider, Theme } from "@chakra-ui/react"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { chakraSystem } from "components/ui/theme"
-import { Toaster } from "components/ui/toaster"
-import { queryClient } from "config/queryClient"
-import { wagmiConfig } from "config/walletConnect"
-import { ThemeProvider } from "next-themes"
-import { PropsWithChildren } from "react"
-import { WagmiProvider } from "wagmi"
+import { queryClient } from "configs/queryClient"
+import { PropsWithChildren, useEffect, useState } from "react"
 
 const AppProvider = ({ children }: PropsWithChildren) => {
+  const [isReady, setReady] = useState(false)
+
+  useEffect(() => {
+    setReady(true)
+  }, [])
+
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <ChakraProvider value={chakraSystem}>
-            <ThemeProvider attribute="class" disableTransitionOnChange enableSystem={false} forcedTheme="light">
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </ChakraProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider value={chakraSystem}>
+        {isReady && (
+          <Theme appearance="light">
+            {/*  */}
+            {children}
+          </Theme>
+        )}
+      </ChakraProvider>
+    </QueryClientProvider>
   )
 }
 
