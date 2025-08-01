@@ -9,7 +9,12 @@ const grafanaClient = axios.create({
 })
 grafanaClient.interceptors.response.use(({ data }) => data.data)
 
-const query = (body?: unknown): Promise<unknown> => grafanaClient.post(`/api/ds/query`, body)
+const query = (body?: any): Promise<unknown> =>
+  grafanaClient.post(`/api/ds/query`, body, {
+    fetchOptions: {
+      mode: "no-cors",
+    },
+  })
 
 export const grafanaService = {
   query,

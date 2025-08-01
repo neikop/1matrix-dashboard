@@ -12,9 +12,11 @@ import {
   Text,
   TextProps,
 } from "@chakra-ui/react"
+import { useQuery } from "@tanstack/react-query"
 import { SlideNumber } from "components/common"
 import { PropsWithChildren, ReactNode } from "react"
 import { IoMdOpen } from "react-icons/io"
+import { grafanaService } from "services"
 
 import InfoChart from "./InfoChart"
 
@@ -40,15 +42,37 @@ const InfoGridItem = ({ label, value, valueProps, ...gridItemProps }: InfoGridIt
 }
 
 type Props = {
-  blockNumber: number
+  chainId: string
   chainName: string
-  nodes: number
+  dataCenters?: number
 }
 
-const ChainInfoCard = ({ blockNumber, chainName, nodes }: Props) => {
+const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
+  const { data } = useQuery({
+    initialData: {},
+    queryFn: () =>
+      grafanaService.query({
+        from: "1754016126566",
+        queries: [
+          {
+            datasource: {
+              type: "prometheus",
+              uid: "PBFA97CFB590B2093",
+            },
+            expr: `count(txpool_local{chain="${chainId}"})`,
+          },
+        ],
+        to: "1754037726566",
+      }),
+    queryKey: ["abc"],
+  })
+
+  console.log(data)
+
   return (
     <Card.Root variant="elevated">
       <Card.Header
+        alignItems="flex-start"
         backgroundColor="bg.muted"
         borderBottomWidth={1}
         display="flex"
@@ -56,19 +80,26 @@ const ChainInfoCard = ({ blockNumber, chainName, nodes }: Props) => {
         justifyContent="space-between"
         py={4}
       >
-        <Card.Title>{chainName}</Card.Title>
-        <Button colorPalette="purple" variant="text">
+        <Stack gap={0}>
+          <Card.Title color="primary.main">{chainName}</Card.Title>
+          <Text color="textSecondary" fontSize="sm">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ante sapien.
+          </Text>
+        </Stack>
+        <Button colorPalette="cyan" variant="text">
           View
           <IoMdOpen />
         </Button>
       </Card.Header>
       <Card.Body>
         <Stack gap={6}>
-          <SimpleGrid columns={{ base: 1, lg: 2 }} gap={2}>
-            <InfoGridItem label="Nodes" value={nodes} />
+          <SimpleGrid columns={{ base: 1, lg: 4 }} gap={2}>
+            <InfoGridItem colSpan={1} label="Nodes" value={4} />
+            <InfoGridItem colSpan={1} label="Data Centers" value={dataCenters} />
             <InfoGridItem
+              colSpan={2}
               label="Block"
-              value={<SlideNumber autoIncrease cooldown={4000} size="lg" value={blockNumber} />}
+              value={<SlideNumber autoIncrease cooldown={4000} size="lg" value={40000} />}
               valueProps={{ color: "fg.warning" }}
             />
           </SimpleGrid>

@@ -14,7 +14,7 @@ const config = defineConfig({
     tokens: {
       colors: {
         bg: {
-          primary: { value: "{colors.purple.50}" },
+          primary: { value: "{colors.cyan.50}" },
         },
       },
       sizes: {
@@ -25,8 +25,8 @@ const config = defineConfig({
     semanticTokens: {
       colors: {
         primary: {
-          main: { value: "{colors.purple.500}" },
-          dark: { value: "{colors.purple.600}" },
+          main: { value: "{colors.cyan.500}" },
+          dark: { value: "{colors.cyan.600}" },
         },
         textSecondary: { value: "{colors.gray.500}" },
       },
