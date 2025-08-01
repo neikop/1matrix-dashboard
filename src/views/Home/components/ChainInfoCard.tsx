@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Card,
   Center,
@@ -12,12 +11,10 @@ import {
   Text,
   TextProps,
 } from "@chakra-ui/react"
-import { useQuery } from "@tanstack/react-query"
 import { SlideNumber } from "components/SlideNumber"
 import { useGrafana } from "hooks/useGrafana"
-import { ReactNode } from "react"
+import { ReactNode, useEffect } from "react"
 import { IoMdOpen } from "react-icons/io"
-import { apiClient } from "services/clients"
 
 type InfoGridItemProps = {
   label?: ReactNode
@@ -48,7 +45,12 @@ type Props = {
 
 const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
   const data = useGrafana({ chainId })
-  console.log({ chainName, ...data })
+
+  useEffect(() => {
+    if (Object.values(data).length) {
+      console.log(chainName, Object.values(data))
+    }
+  }, [chainName, data])
 
   return (
     <Card.Root variant="elevated">

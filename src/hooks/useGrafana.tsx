@@ -18,7 +18,7 @@ export const useGrafana = ({ chainId }: Props) => {
           type: "prometheus",
           uid: "PBFA97CFB590B2093",
         },
-        intervalMs: 60000,
+        intervalMs: 15000,
       }
       return apiClient.post("/api/query", {
         ...initTime,
@@ -91,7 +91,7 @@ export const useGrafana = ({ chainId }: Props) => {
 const getLatestValue = (key: string, result: Result) => {
   try {
     if (key === "blocknumber") {
-      return Math.round(last(result.frames[0].data.values[1]) ?? 0)
+      return Math.round(max(result.frames[0].data.values[1]) ?? 0)
     }
     if (key === "tps") {
       return Math.round(mean(result.frames[0].data.values[1]) ?? 0)
