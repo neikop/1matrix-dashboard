@@ -96,14 +96,14 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
             </Flex>
             <Separator />
             <Flex alignItems="center" justifyContent="space-between">
-              <Text>Block Time (s)</Text>
+              <Text>Block Time</Text>
               <Text as="div" color="fg.success" fontSize="2xl">
                 {data.blocktime}
               </Text>
             </Flex>
             <Separator />
             <Flex alignItems="center" justifyContent="space-between">
-              <Text>Finality Time (ms)</Text>
+              <Text>Finality Time</Text>
               <Text as="div" color="fg.warning" fontSize="2xl">
                 <SlideNumber value={data.finality} />
               </Text>
