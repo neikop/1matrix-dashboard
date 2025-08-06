@@ -26,24 +26,24 @@ export const useGrafana = ({ chainId }: Props) => {
           {
             ...initQuery,
             expr:
-              chainId === "bcos-testnet"
-                ? `count(ledger_block_height{chain=\"bcos-testnet\"})`
+              chainId === "bcos-testnet-2"
+                ? `count(ledger_block_height{chain=\"bcos-testnet-2\"})`
                 : `count(txpool_local{chain=\"${chainId}\"})`,
             refId: "node",
           },
           {
             ...initQuery,
             expr:
-              chainId === "bcos-testnet"
-                ? `min(ledger_block_height{node=\"node0\", chain=\"bcos-testnet\"})`
+              chainId === "bcos-testnet-2"
+                ? `min(ledger_block_height{node=\"node0\", chain=\"bcos-testnet-2\"})`
                 : `min(chain_head_header{chain=\"${chainId}\"})`,
             refId: "blocknumber",
           },
           {
             ...initQuery,
             expr:
-              chainId === "bcos-testnet"
-                ? `sum by(chain) (avg_over_time(txpool_tps{chain=\"bcos-testnet\"}[1h]))`
+              chainId === "bcos-testnet-2"
+                ? `sum by(chain) (avg_over_time(txpool_tps{chain=\"bcos-testnet-2\"}[1h]))`
                 : `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain=\"${chainId}\"}[1m])))`,
             refId: "tps",
           },
@@ -52,8 +52,8 @@ export const useGrafana = ({ chainId }: Props) => {
             expr:
               chainId === "1mtx-devnet"
                 ? `avg(1 / rate(beacon_head_slot{chain=\"1mtx-devnet\", job=\"beacon\"}[1h]))`
-                : chainId === "bcos-testnet"
-                  ? `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain=\"bcos-testnet\"}[1h])) / 1000`
+                : chainId === "bcos-testnet-2"
+                  ? `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain=\"bcos-testnet-2\"}[1h])) / 1000`
                   : `avg(eth_con_spec_seconds_per_slot{chain=\"${chainId}\"})`,
             refId: "blocktime",
           },
@@ -62,8 +62,8 @@ export const useGrafana = ({ chainId }: Props) => {
             expr:
               chainId === "1mtx-devnet"
                 ? `avg(time() - (beacon_finalized_epoch{chain=\"1mtx-devnet\", job=\"beacon\"} * 32*4 + 1749006559))`
-                : chainId === "bcos-testnet"
-                  ? `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain=\"bcos-testnet\"}[1h]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain=\"bcos-testnet\"}[1h])) / 1000`
+                : chainId === "bcos-testnet-2"
+                  ? `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain=\"bcos-testnet-2\"}[1h]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain=\"bcos-testnet-2\"}[1h])) / 1000`
                   : `2 * avg(eth_con_spec_seconds_per_slot{chain=\"${chainId}\"})`,
             refId: "finality",
           },
