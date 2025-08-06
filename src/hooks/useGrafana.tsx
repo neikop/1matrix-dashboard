@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
+import { ChainID } from "common/enum"
 import { last, max, mean } from "lodash"
 import { apiClient } from "services/clients"
 
 type Props = {
-  chainId: string
+  chainId: ChainID
 }
 
 export const useGrafana = ({ chainId }: Props) => {
@@ -25,46 +26,27 @@ export const useGrafana = ({ chainId }: Props) => {
         queries: [
           {
             ...initQuery,
-            expr:
-              chainId === "bcos-testnet-2"
-                ? `count(ledger_block_height{chain=\"bcos-testnet-2\"})`
-                : `count(txpool_local{chain=\"${chainId}\"})`,
+            expr: getQueryExpr(chainId, "node"),
             refId: "node",
           },
           {
             ...initQuery,
-            expr:
-              chainId === "bcos-testnet-2"
-                ? `min(ledger_block_height{node=\"node0\", chain=\"bcos-testnet-2\"})`
-                : `min(chain_head_header{chain=\"${chainId}\"})`,
+            expr: getQueryExpr(chainId, "blocknumber"),
             refId: "blocknumber",
           },
           {
             ...initQuery,
-            expr:
-              chainId === "bcos-testnet-2"
-                ? `sum by(chain) (avg_over_time(txpool_tps{chain=\"bcos-testnet-2\"}[1h]))`
-                : `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain=\"${chainId}\"}[1m])))`,
+            expr: getQueryExpr(chainId, "tps"),
             refId: "tps",
           },
           {
             ...initQuery,
-            expr:
-              chainId === "1mtx-devnet"
-                ? `avg(1 / rate(beacon_head_slot{chain=\"1mtx-devnet\", job=\"beacon\"}[1h]))`
-                : chainId === "bcos-testnet-2"
-                  ? `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain=\"bcos-testnet-2\"}[1h])) / 1000`
-                  : `avg(eth_con_spec_seconds_per_slot{chain=\"${chainId}\"})`,
+            expr: getQueryExpr(chainId, "blocktime"),
             refId: "blocktime",
           },
           {
             ...initQuery,
-            expr:
-              chainId === "1mtx-devnet"
-                ? `avg(time() - (beacon_finalized_epoch{chain=\"1mtx-devnet\", job=\"beacon\"} * 32*4 + 1749006559))`
-                : chainId === "bcos-testnet-2"
-                  ? `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain=\"bcos-testnet-2\"}[1h]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain=\"bcos-testnet-2\"}[1h])) / 1000`
-                  : `2 * avg(eth_con_spec_seconds_per_slot{chain=\"${chainId}\"})`,
+            expr: getQueryExpr(chainId, "finality"),
             refId: "finality",
           },
         ],
@@ -97,15 +79,54 @@ const getLatestValue = (key: string, result: Result) => {
       return Math.round(mean(result.frames[0].data.values[1]) ?? 0)
     }
     if (key === "blocktime") {
-      return Math.ceil(last(result.frames[0].data.values[1]) ?? 0)
+      const value = last(result.frames[0].data.values[1]) ?? 0
+      return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value)
     }
     if (key === "finality") {
-      const avg = mean(result.frames[0].data.values[1]) ?? 0
-      if (avg >= 1) return Math.round(avg)
-      return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(avg)
+      const value = last(result.frames[0].data.values[1]) ?? 0
+      return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value)
     }
     return Math.round(mean(result.frames[0].data.values[1]))
   } catch {
     return 0
   }
+}
+
+const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "finality" | "node" | "tps") => {
+  if (type === "node") {
+    return {
+      [ChainID.BCOS]: `count(ledger_block_height{chain="${chainId}"})`,
+      [ChainID.DEVNET]: `min(validator_count{chain="${chainId}", job="beacon", state="Active"})`,
+      [ChainID.TESTNET]: `count(txpool_local{chain="${chainId}"})`,
+    }[chainId]
+  }
+  if (type === "blocknumber") {
+    return {
+      [ChainID.BCOS]: `(min(ledger_block_height{node="node0", chain="${chainId}"}))`,
+      [ChainID.DEVNET]: `(min(chain_head_header{chain="${chainId}"}))`,
+      [ChainID.TESTNET]: `(min(chain_head_header{chain="${chainId}"}))`,
+    }[chainId]
+  }
+  if (type === "tps") {
+    return {
+      [ChainID.BCOS]: `(sum by(chain) (avg_over_time(txpool_tps{chain=\"${chainId}\"}[1h])))`,
+      [ChainID.DEVNET]: `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))`,
+      [ChainID.TESTNET]: `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))`,
+    }[chainId]
+  }
+  if (type === "blocktime") {
+    return {
+      [ChainID.BCOS]: `(avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="${chainId}"}[1h])) / 1000)`,
+      [ChainID.DEVNET]: `(avg(1 / rate(beacon_head_slot{chain="${chainId}", job="beacon"}[1h])))`,
+      [ChainID.TESTNET]: `(avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
+    }[chainId]
+  }
+  if (type === "finality") {
+    return {
+      [ChainID.BCOS]: `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="${chainId}"}[1h]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="${chainId}"}[1h])) / 1000`,
+      [ChainID.DEVNET]: `(2 * avg(1 / rate(beacon_head_slot{chain="${chainId}", job="beacon"}[1h])))`,
+      [ChainID.TESTNET]: `(2 * avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
+    }[chainId]
+  }
+  return ""
 }

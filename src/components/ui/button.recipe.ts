@@ -31,12 +31,12 @@ export const buttonRecipe = defineRecipe({
   },
   compoundVariants: [
     {
-      colorPalette: "purple",
+      colorPalette: "cyan",
       variant: "text",
       css: {
-        color: "purple.500",
+        color: "cyan.500",
         _hover: {
-          color: "purple.600",
+          color: "cyan.600",
         },
       },
     },

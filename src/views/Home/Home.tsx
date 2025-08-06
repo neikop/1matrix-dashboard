@@ -1,5 +1,6 @@
 "use client"
 import { Container, SimpleGrid } from "@chakra-ui/react"
+import { ChainID } from "common/enum"
 
 import { ChainInfoCard } from "./components"
 
@@ -7,9 +8,9 @@ const Home = () => {
   return (
     <Container maxWidth="vw">
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
-        <ChainInfoCard chainId="1matrix-stressnet" chainName="ETH Testnet" dataCenters={"..."} />
-        <ChainInfoCard chainId="bcos-testnet-2" chainName="BCOS" dataCenters={"..."} />
-        <ChainInfoCard chainId="1mtx-devnet" chainName="ETH Devnet" dataCenters={"..."} />
+        <ChainInfoCard chainId={ChainID.TESTNET} chainName="ETH Testnet" />
+        <ChainInfoCard chainId={ChainID.BCOS} chainName="BCOS" />
+        <ChainInfoCard chainId={ChainID.DEVNET} chainName="ETH Devnet" />
       </SimpleGrid>
     </Container>
   )

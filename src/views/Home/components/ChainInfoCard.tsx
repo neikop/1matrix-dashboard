@@ -11,6 +11,7 @@ import {
   Text,
   TextProps,
 } from "@chakra-ui/react"
+import { ChainID } from "common/enum"
 import { SlideNumber } from "components/SlideNumber"
 import { useGrafana } from "hooks/useGrafana"
 import { ReactNode, useEffect } from "react"
@@ -38,12 +39,12 @@ const InfoGridItem = ({ label, value, valueProps, ...gridItemProps }: InfoGridIt
 }
 
 type Props = {
-  chainId: string
+  chainId: ChainID
   chainName: string
   dataCenters?: number | string
 }
 
-const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
+const ChainInfoCard = ({ chainId, chainName, dataCenters = 3 }: Props) => {
   const data = useGrafana({ chainId })
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
       <Card.Body>
         <Stack gap={6}>
           <SimpleGrid columns={{ base: 1, lg: 4 }} gap={2}>
-            <InfoGridItem colSpan={1} label="Nodes" value={data.node} />
+            <InfoGridItem colSpan={1} label="Nodes" value={data.node} valueProps={{ color: "fg.success" }} />
             <InfoGridItem colSpan={1} label="Data Centers" value={dataCenters} />
             <InfoGridItem
               colSpan={2}
@@ -90,7 +91,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
           <Stack>
             <Flex alignItems="center" justifyContent="space-between">
               <Text>TPS</Text>
-              <Text as="div" color="fg.success" fontSize="2xl">
+              <Text as="div" color="fg.warning" fontSize="2xl">
                 <SlideNumber value={data.tps} />
               </Text>
             </Flex>
@@ -104,7 +105,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters }: Props) => {
             <Separator />
             <Flex alignItems="center" justifyContent="space-between">
               <Text>Finality Time</Text>
-              <Text as="div" color="fg.warning" fontSize="2xl">
+              <Text as="div" color="fg.info" fontSize="2xl">
                 <SlideNumber value={data.finality} />
               </Text>
             </Flex>
