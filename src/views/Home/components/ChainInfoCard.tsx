@@ -67,7 +67,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3, description }: Pro
         py={4}
       >
         <Stack gap={0} w="full">
-          <Flex alignItems="flex-end" justifyContent="space-between">
+          <Flex alignItems="flex-start" justifyContent="space-between">
             <Card.Title color="purple.600">{chainName}</Card.Title>
             <Button colorPalette="blue" display="none" variant="text">
               <Text fontWeight="semibold">View</Text>
