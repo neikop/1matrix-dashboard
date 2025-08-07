@@ -71,7 +71,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3 }: Props) => {
           </Text>
         </Stack>
         <Button colorPalette="blue" variant="text">
-          View
+          <Text fontWeight="semibold">View</Text>
           <IoMdOpen />
         </Button>
       </Card.Header>
