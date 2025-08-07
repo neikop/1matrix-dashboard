@@ -21,7 +21,7 @@ export const useGrafana = ({ chainId }: Props) => {
           type: "prometheus",
           uid: host === Host.MATRIX ? "PBFA97CFB590B2093" : "deu611bogj1tsb",
         },
-        intervalMs: 60 * 1000,
+        intervalMs: 30 * 1000,
       }
       return apiClient.post("/api/query", {
         ...initTime,
@@ -36,6 +36,7 @@ export const useGrafana = ({ chainId }: Props) => {
             ...initQuery,
             expr: getQueryExpr(chainId, "blocknumber"),
             refId: "blocknumber",
+            intervalMs: 2 * 1000,
           },
           {
             ...initQuery,
