@@ -65,12 +65,12 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3 }: Props) => {
         py={4}
       >
         <Stack gap={0}>
-          <Card.Title color="primary.main">{chainName}</Card.Title>
+          <Card.Title color="purple.600">{chainName}</Card.Title>
           <Text color="textSecondary" fontSize="sm">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ante sapien.
           </Text>
         </Stack>
-        <Button colorPalette="cyan" variant="text">
+        <Button colorPalette="blue" variant="text">
           View
           <IoMdOpen />
         </Button>

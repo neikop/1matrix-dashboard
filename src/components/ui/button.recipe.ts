@@ -40,5 +40,15 @@ export const buttonRecipe = defineRecipe({
         },
       },
     },
+    {
+      colorPalette: "blue",
+      variant: "text",
+      css: {
+        color: "blue.500",
+        _hover: {
+          color: "blue.600",
+        },
+      },
+    },
   ],
 })
