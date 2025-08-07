@@ -2,8 +2,15 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
 
 const AnimatedDigit = ({ digit, size }: { digit: string; size: "lg" | "sm" }) => {
+  const isDigit = /[0-9]/.test(digit)
   return (
-    <div className={"relative inline-block overflow-hidden text-center " + (size === "sm" ? "h-9 w-4" : "h-13 w-6")}>
+    <div
+      className={"relative inline-block overflow-hidden text-center"}
+      style={{
+        height: size === "sm" ? 36 : 52,
+        width: (size === "sm" ? 16 : 24) / (isDigit ? 1 : 2),
+      }}
+    >
       <AnimatePresence initial={false} mode="popLayout">
         <motion.div
           animate={{ opacity: 1, y: "0%" }}
@@ -28,33 +35,13 @@ type Props = {
   value: number
 }
 
-const SlideNumber = ({ autoIncrease, autoRandom, cooldown, size = "sm", value: number }: Props) => {
-  // const [number, setNumber] = useState(value)
+const SlideNumber = ({ size = "sm", value: number }: Props) => {
   const [digits, setDigits] = useState<string[]>([])
 
   useEffect(() => {
-    setDigits((number ?? 0).toString().split(""))
+    const value = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(number ?? 0)
+    setDigits(value.toString().split(""))
   }, [number])
-
-  // useEffect(() => {
-  //   if (!autoIncrease && !autoRandom) return
-
-  //   const interval = setInterval(() => {
-  //     setNumber((prev) => {
-  //       if (autoRandom) {
-  //         const delta = Math.floor(Math.random() * 5) + 1 // 1 to 5
-  //         const add = Math.random() > 0.5
-  //         const next = add ? prev + delta : prev - delta
-  //         return Math.max(0, next)
-  //       } else if (autoIncrease) {
-  //         return prev + 1
-  //       }
-  //       return prev
-  //     })
-  //   }, cooldown ?? 2000)
-
-  //   return () => clearInterval(interval)
-  // }, [autoIncrease, autoRandom, cooldown])
 
   return (
     <div className="flex text-2xl font-bold">

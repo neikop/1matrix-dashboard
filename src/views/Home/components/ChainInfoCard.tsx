@@ -8,6 +8,7 @@ import {
   Separator,
   SimpleGrid,
   Stack,
+  Tag,
   Text,
   TextProps,
 } from "@chakra-ui/react"
@@ -42,9 +43,10 @@ type Props = {
   chainId: ChainID
   chainName: string
   dataCenters?: number | string
+  description?: string
 }
 
-const ChainInfoCard = ({ chainId, chainName, dataCenters = 3 }: Props) => {
+const ChainInfoCard = ({ chainId, chainName, dataCenters = 3, description }: Props) => {
   const data = useGrafana({ chainId })
 
   useEffect(() => {
@@ -64,16 +66,24 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3 }: Props) => {
         justifyContent="space-between"
         py={4}
       >
-        <Stack gap={0}>
-          <Card.Title color="purple.600">{chainName}</Card.Title>
+        <Stack gap={0} w="full">
+          <Flex alignItems="flex-end" justifyContent="space-between">
+            <Card.Title color="purple.600">{chainName}</Card.Title>
+            <Button colorPalette="blue" display="none" variant="text">
+              <Text fontWeight="semibold">View</Text>
+              <IoMdOpen />
+            </Button>
+
+            <Tag.Root colorPalette="blue" px={2} py={1} rounded="full" size="md">
+              <Tag.Label fontWeight="medium" letterSpacing="1px">
+                Testnet
+              </Tag.Label>
+            </Tag.Root>
+          </Flex>
           <Text color="textSecondary" fontSize="sm">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ante sapien.
+            {description}
           </Text>
         </Stack>
-        <Button colorPalette="blue" variant="text">
-          <Text fontWeight="semibold">View</Text>
-          <IoMdOpen />
-        </Button>
       </Card.Header>
       <Card.Body>
         <Stack gap={6}>
@@ -90,8 +100,15 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3 }: Props) => {
 
           <Stack>
             <Flex alignItems="center" justifyContent="space-between">
-              <Text>TPS</Text>
+              <Text>Max TPS</Text>
               <Text as="div" color="fg.warning" fontSize="2xl">
+                <SlideNumber value={data.maxTps} />
+              </Text>
+            </Flex>
+            <Separator />
+            <Flex alignItems="center" justifyContent="space-between">
+              <Text>Live TPS</Text>
+              <Text as="div" color="fg.info" fontSize="2xl">
                 <SlideNumber value={data.tps} />
               </Text>
             </Flex>
@@ -105,7 +122,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3 }: Props) => {
             <Separator />
             <Flex alignItems="center" justifyContent="space-between">
               <Text>Finality Time</Text>
-              <Text as="div" color="fg.info" fontSize="2xl">
+              <Text as="div" color="fg.success" fontSize="2xl">
                 <SlideNumber value={data.finality} />
               </Text>
             </Flex>

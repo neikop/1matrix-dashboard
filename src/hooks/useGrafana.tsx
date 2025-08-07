@@ -66,32 +66,35 @@ export const useGrafana = ({ chainId }: Props) => {
       const result = results[key]
       return {
         ...data,
-        [key]: getLatestValue(key, result),
+        ...(getLatestValue(key, result) as any),
       }
     },
-    {} as { blocknumber: number; blocktime: number; finality: number; node: number; tps: number },
+    {} as { blocknumber: number; blocktime: number; finality: number; maxTps: number; node: number; tps: number },
   )
 }
 
 const getLatestValue = (key: string, result: Result) => {
   try {
     if (key === "blocknumber") {
-      return Math.round(max(result.frames[0].data.values[1]) ?? 0)
+      return { [key]: Math.round(max(result.frames[0].data.values[1]) ?? 0) }
     }
     if (key === "tps") {
-      return Math.round(mean(result.frames[0].data.values[1]) ?? 0)
+      return {
+        [key]: Math.round(mean(result.frames[0].data.values[1]) ?? 0),
+        maxTps: Math.round(max(result.frames[0].data.values[1]) ?? 0),
+      }
     }
     if (key === "blocktime") {
       const value = last(result.frames[0].data.values[1]) ?? 0
-      return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value)
+      return { [key]: new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value) }
     }
     if (key === "finality") {
       const value = last(result.frames[0].data.values[1]) ?? 0
-      return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value)
+      return { [key]: new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value) }
     }
-    return Math.round(mean(result.frames[0].data.values[1]))
+    return { [key]: Math.round(mean(result.frames[0].data.values[1])) }
   } catch {
-    return 0
+    return { [key]: 0 }
   }
 }
 

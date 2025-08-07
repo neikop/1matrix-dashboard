@@ -8,10 +8,26 @@ const Home = () => {
   return (
     <Container maxWidth="vw">
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
-        <ChainInfoCard chainId={ChainID.TESTNET} chainName="ETH Testnet" />
-        <ChainInfoCard chainId={ChainID.BCOS} chainName="BCOS" />
-        <ChainInfoCard chainId={ChainID.DEVNET} chainName="ETH Devnet" />
-        <ChainInfoCard chainId={ChainID.COSMOS} chainName="COSMOS" />
+        <ChainInfoCard
+          chainId={ChainID.TESTNET}
+          chainName="Alpha"
+          description="Permissioned L1 based on Ethereum, PoS consensus: the most popular, reliable, robust & stable blockchain protocol"
+        />
+        <ChainInfoCard
+          chainId={ChainID.BCOS}
+          chainName="Beta"
+          description="Permissioned L1 based on Fisco Bcos, rpBFT consensus, one of the fastest blockchains"
+        />
+        <ChainInfoCard
+          chainId={ChainID.COSMOS}
+          chainName="Gamma"
+          description="Public L1 based on Comos SDK, CometBFT consensus: the most customizable blockchain SDK"
+        />
+        <ChainInfoCard
+          chainId={ChainID.DEVNET}
+          chainName="Delta"
+          description="Public L1 based on Ethereum, PoS consensus: the most popular, reliable, robust & stable blockchain protocol "
+        />
       </SimpleGrid>
     </Container>
   )
