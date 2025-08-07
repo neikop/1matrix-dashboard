@@ -123,7 +123,7 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
   if (type === "blocktime") {
     return {
       [ChainID.TESTNET]: `(avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
-      [ChainID.BCOS]: `(avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="${chainId}"}[1h])) / 1000)`,
+      [ChainID.BCOS]: `avg(block_exec_duration_milliseconds_gauge{chain="${chainId}"}) / 1000`,
       [ChainID.DEVNET]: `(avg(1 / rate(beacon_head_slot{chain="${chainId}", job="beacon"}[1h])))`,
       [ChainID.COSMOS]: 'avg(cometbft_state_block_processing_time_count{chain_id="test_9000-1"}) / 1000',
     }[chainId]
@@ -131,7 +131,7 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
   if (type === "finality") {
     return {
       [ChainID.TESTNET]: `(2 * avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
-      [ChainID.BCOS]: `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="${chainId}"}[1h]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="${chainId}"}[1h])) / 1000`,
+      [ChainID.BCOS]: `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="${chainId}"}[5m]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="${chainId}"}[5m])) / 1000`,
       [ChainID.DEVNET]: `(2 * avg(1 / rate(beacon_head_slot{chain="${chainId}", job="beacon"}[1h])))`,
       [ChainID.COSMOS]: `avg by(method) (cometbft_abci_connection_method_timing_seconds_bucket{chain_id="test_9000-1", type="sync", le="+Inf", method="finalize_block"}) / 1000`,
     }[chainId]
