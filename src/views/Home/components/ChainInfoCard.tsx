@@ -99,7 +99,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3 }: Props) => {
             <Flex alignItems="center" justifyContent="space-between">
               <Text>Block Time</Text>
               <Text as="div" color="fg.success" fontSize="2xl">
-                {data.blocktime}
+                <SlideNumber value={data.blocktime} />
               </Text>
             </Flex>
             <Separator />

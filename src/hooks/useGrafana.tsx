@@ -1,5 +1,6 @@
+/* eslint-disable perfectionist/sort-objects */
 import { useQuery } from "@tanstack/react-query"
-import { ChainID } from "common/enum"
+import { ChainID, Host } from "common/enum"
 import { last, max, mean } from "lodash"
 import { apiClient } from "services/clients"
 
@@ -14,15 +15,17 @@ export const useGrafana = ({ chainId }: Props) => {
         from: (Date.now() - 1 * 60 * 60 * 1000).toString(),
         to: Date.now().toString(),
       }
+      const host: Host = chainId === ChainID.COSMOS ? Host.COSMOS : Host.MATRIX
       const initQuery = {
         datasource: {
           type: "prometheus",
-          uid: "PBFA97CFB590B2093",
+          uid: host === Host.MATRIX ? "PBFA97CFB590B2093" : "deu611bogj1tsb",
         },
         intervalMs: 15000,
       }
       return apiClient.post("/api/query", {
         ...initTime,
+        host,
         queries: [
           {
             ...initQuery,
@@ -95,37 +98,42 @@ const getLatestValue = (key: string, result: Result) => {
 const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "finality" | "node" | "tps") => {
   if (type === "node") {
     return {
+      [ChainID.TESTNET]: `count(txpool_local{chain="${chainId}"})`,
       [ChainID.BCOS]: `count(ledger_block_height{chain="${chainId}"})`,
       [ChainID.DEVNET]: `min(validator_count{chain="${chainId}", job="beacon", state="Active"})`,
-      [ChainID.TESTNET]: `count(txpool_local{chain="${chainId}"})`,
+      [ChainID.COSMOS]: 'cometbft_consensus_validators{chain_id="test_9000-1", instance="validator-1", job="cosmos"}',
     }[chainId]
   }
   if (type === "blocknumber") {
     return {
+      [ChainID.TESTNET]: `(min(chain_head_header{chain="${chainId}"}))`,
       [ChainID.BCOS]: `(min(ledger_block_height{node="node0", chain="${chainId}"}))`,
       [ChainID.DEVNET]: `(min(chain_head_header{chain="${chainId}"}))`,
-      [ChainID.TESTNET]: `(min(chain_head_header{chain="${chainId}"}))`,
+      [ChainID.COSMOS]: 'cometbft_consensus_height{chain_id="test_9000-1", instance="validator-1", job="cosmos"}',
     }[chainId]
   }
   if (type === "tps") {
     return {
+      [ChainID.TESTNET]: `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))`,
       [ChainID.BCOS]: `(sum by(chain) (avg_over_time(txpool_tps{chain=\"${chainId}\"}[1h])))`,
       [ChainID.DEVNET]: `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))`,
-      [ChainID.TESTNET]: `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))`,
+      [ChainID.COSMOS]: "avg(cometbft_consensus_num_txs)",
     }[chainId]
   }
   if (type === "blocktime") {
     return {
+      [ChainID.TESTNET]: `(avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
       [ChainID.BCOS]: `(avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="${chainId}"}[1h])) / 1000)`,
       [ChainID.DEVNET]: `(avg(1 / rate(beacon_head_slot{chain="${chainId}", job="beacon"}[1h])))`,
-      [ChainID.TESTNET]: `(avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
+      [ChainID.COSMOS]: 'avg(cometbft_state_block_processing_time_count{chain_id="test_9000-1"}) / 1000',
     }[chainId]
   }
   if (type === "finality") {
     return {
+      [ChainID.TESTNET]: `(2 * avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
       [ChainID.BCOS]: `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="${chainId}"}[1h]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="${chainId}"}[1h])) / 1000`,
       [ChainID.DEVNET]: `(2 * avg(1 / rate(beacon_head_slot{chain="${chainId}", job="beacon"}[1h])))`,
-      [ChainID.TESTNET]: `(2 * avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
+      [ChainID.COSMOS]: `avg by(method) (cometbft_abci_connection_method_timing_seconds_bucket{chain_id="test_9000-1", type="sync", le="+Inf", method="finalize_block"}) / 1000`,
     }[chainId]
   }
   return ""

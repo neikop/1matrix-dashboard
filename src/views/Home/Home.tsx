@@ -11,6 +11,7 @@ const Home = () => {
         <ChainInfoCard chainId={ChainID.TESTNET} chainName="ETH Testnet" />
         <ChainInfoCard chainId={ChainID.BCOS} chainName="BCOS" />
         <ChainInfoCard chainId={ChainID.DEVNET} chainName="ETH Devnet" />
+        <ChainInfoCard chainId={ChainID.COSMOS} chainName="COSMOS" />
       </SimpleGrid>
     </Container>
   )
