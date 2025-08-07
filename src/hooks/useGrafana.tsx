@@ -12,7 +12,7 @@ export const useGrafana = ({ chainId }: Props) => {
   const { data } = useQuery({
     queryFn: () => {
       const initTime = {
-        from: (Date.now() - 1 * 60 * 60 * 1000).toString(),
+        from: (Date.now() - 6 * 60 * 60 * 1000).toString(),
         to: Date.now().toString(),
       }
       const host: Host = chainId === ChainID.COSMOS ? Host.COSMOS : Host.MATRIX
@@ -21,7 +21,7 @@ export const useGrafana = ({ chainId }: Props) => {
           type: "prometheus",
           uid: host === Host.MATRIX ? "PBFA97CFB590B2093" : "deu611bogj1tsb",
         },
-        intervalMs: 15000,
+        intervalMs: 60 * 1000,
       }
       return apiClient.post("/api/query", {
         ...initTime,
@@ -114,9 +114,9 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
   }
   if (type === "tps") {
     return {
-      [ChainID.TESTNET]: `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))`,
+      [ChainID.TESTNET]: `(max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))) / (avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
       [ChainID.BCOS]: `(sum by(chain) (avg_over_time(txpool_tps{chain=\"${chainId}\"}[1h])))`,
-      [ChainID.DEVNET]: `max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))`,
+      [ChainID.DEVNET]: `(max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))) / (avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
       [ChainID.COSMOS]: "avg(cometbft_consensus_num_txs)",
     }[chainId]
   }
