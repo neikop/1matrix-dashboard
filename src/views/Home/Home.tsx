@@ -7,7 +7,7 @@ import { ChainInfoCard } from "./components"
 const Home = () => {
   return (
     <Container maxWidth="vw">
-      <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
+      <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} gap={6}>
         <ChainInfoCard
           chainId={ChainID.TESTNET}
           chainName="Alpha"
