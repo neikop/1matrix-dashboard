@@ -5,6 +5,8 @@ export enum ChainID {
   DEVNET = "1mtx-devnet",
 
   COSMOS = "cosmos",
+  QUORUM = "bcos-quorum",
+  SONIC = "bcos-sonic",
 }
 
 export enum Host {

@@ -39,7 +39,7 @@ const SlideNumber = ({ size = "sm", value: number }: Props) => {
   const [digits, setDigits] = useState<string[]>([])
 
   useEffect(() => {
-    const value = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(number ?? 0)
+    const value = new Intl.NumberFormat("en-US", { maximumFractionDigits: 3 }).format(number ?? 0)
     setDigits(value.toString().split(""))
   }, [number])
 

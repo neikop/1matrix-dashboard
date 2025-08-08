@@ -26,7 +26,17 @@ const Home = () => {
         <ChainInfoCard
           chainId={ChainID.DEVNET}
           chainName="Delta"
-          description="Public L1 based on Ethereum, PoS consensus: the most popular, reliable, robust & stable blockchain protocol "
+          description="Public L1 based on Ethereum, PoS consensus: the most popular, reliable, robust & stable blockchain protocol"
+        />
+        <ChainInfoCard
+          chainId={ChainID.QUORUM}
+          chainName="Quorum"
+          // description=""
+        />
+        <ChainInfoCard
+          chainId={ChainID.SONIC}
+          chainName="Sonic"
+          // description=""
         />
       </SimpleGrid>
     </Container>

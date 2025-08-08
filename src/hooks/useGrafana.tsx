@@ -21,7 +21,7 @@ export const useGrafana = ({ chainId }: Props) => {
           type: "prometheus",
           uid: host === Host.MATRIX ? "PBFA97CFB590B2093" : "deu611bogj1tsb",
         },
-        intervalMs: 30 * 1000,
+        intervalMs: 60 * 1000,
       }
       return apiClient.post("/api/query", {
         ...initTime,
@@ -87,10 +87,16 @@ const getLatestValue = (key: string, result: Result) => {
     }
     if (key === "blocktime") {
       const value = last(result.frames[0].data.values[1]) ?? 0
+      if (value < 0.01) {
+        return { [key]: value.toFixed(3) }
+      }
       return { [key]: new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value) }
     }
     if (key === "finality") {
       const value = last(result.frames[0].data.values[1]) ?? 0
+      if (value < 0.01) {
+        return { [key]: value.toFixed(3) }
+      }
       return { [key]: new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value) }
     }
     return { [key]: Math.round(mean(result.frames[0].data.values[1])) }
@@ -106,6 +112,8 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
       [ChainID.BCOS]: `count(ledger_block_height{chain="${chainId}"})`,
       [ChainID.DEVNET]: `min(validator_count{chain="${chainId}", job="beacon", state="Active"})`,
       [ChainID.COSMOS]: 'cometbft_consensus_validators{chain_id="test_9000-1", instance="validator-1", job="cosmos"}',
+      [ChainID.QUORUM]: 'count(ledger_block_height{chain="bcos-quorum"})',
+      [ChainID.SONIC]: 'count(ledger_block_height{chain="bcos-sonic"})',
     }[chainId]
   }
   if (type === "blocknumber") {
@@ -114,6 +122,8 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
       [ChainID.BCOS]: `(min(ledger_block_height{node="node0", chain="${chainId}"}))`,
       [ChainID.DEVNET]: `(min(chain_head_header{chain="${chainId}"}))`,
       [ChainID.COSMOS]: 'cometbft_consensus_height{chain_id="test_9000-1", instance="validator-1", job="cosmos"}',
+      [ChainID.QUORUM]: 'min(ledger_block_height{node="node0", chain="bcos-quorum"})',
+      [ChainID.SONIC]: 'min(ledger_block_height{node="node0", chain="bcos-sonic"})',
     }[chainId]
   }
   if (type === "tps") {
@@ -122,6 +132,8 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
       [ChainID.BCOS]: `(sum by(chain) (avg_over_time(txpool_tps{chain=\"${chainId}\"}[1h])))`,
       [ChainID.DEVNET]: `(max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))) / (avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
       [ChainID.COSMOS]: "avg(cometbft_consensus_num_txs)",
+      [ChainID.QUORUM]: 'sum by(chain) (txpool_tps{chain="bcos-quorum"})',
+      [ChainID.SONIC]: 'sum by(chain) (txpool_tps{chain="bcos-sonic"})',
     }[chainId]
   }
   if (type === "blocktime") {
@@ -130,6 +142,8 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
       [ChainID.BCOS]: `avg(block_exec_duration_milliseconds_gauge{chain="${chainId}"}) / 1000`,
       [ChainID.DEVNET]: `(avg(1 / rate(beacon_head_slot{chain="${chainId}", job="beacon"}[1h])))`,
       [ChainID.COSMOS]: 'avg(cometbft_state_block_processing_time_count{chain_id="test_9000-1"}) / 1000',
+      [ChainID.QUORUM]: 'avg(block_exec_duration_milliseconds_gauge{chain="bcos-quorum"}) / 1000',
+      [ChainID.SONIC]: 'avg(block_exec_duration_milliseconds_gauge{chain="bcos-sonic"}) / 1000',
     }[chainId]
   }
   if (type === "finality") {
@@ -138,6 +152,10 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
       [ChainID.BCOS]: `avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="${chainId}"}[5m]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="${chainId}"}[5m])) / 1000`,
       [ChainID.DEVNET]: `(2 * avg(1 / rate(beacon_head_slot{chain="${chainId}", job="beacon"}[1h])))`,
       [ChainID.COSMOS]: `avg by(method) (cometbft_abci_connection_method_timing_seconds_bucket{chain_id="test_9000-1", type="sync", le="+Inf", method="finalize_block"}) / 1000`,
+      [ChainID.QUORUM]:
+        'avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="bcos-quorum"}[5m]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="bcos-quorum"}[5m])) / 1000',
+      [ChainID.SONIC]:
+        'avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="bcos-testnet-2"}[5m]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="bcos-testnet-2"}[5m])) / 1000',
     }[chainId]
   }
   return ""
