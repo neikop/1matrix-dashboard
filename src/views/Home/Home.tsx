@@ -38,7 +38,7 @@ const Home = () => {
           chainId={ChainID.QUORUM}
           chainName="1Matrix Epsilon"
           description="Permissioned L1 based on Quorum, qBFT consensus, designed for enterprise and banking"
-          maxTps={1000}
+          maxTps={10000}
           note={7}
         />
         <ChainInfoCard
