@@ -44,9 +44,10 @@ type Props = {
   chainName: string
   dataCenters?: number | string
   description?: string
+  maxTps?: number
 }
 
-const ChainInfoCard = ({ chainId, chainName, dataCenters = 3, description }: Props) => {
+const ChainInfoCard = ({ chainId, chainName, dataCenters = 3, description, maxTps }: Props) => {
   const data = useGrafana({ chainId })
 
   useEffect(() => {
@@ -102,7 +103,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3, description }: Pro
             <Flex alignItems="center" justifyContent="space-between">
               <Text>Max TPS</Text>
               <Text as="div" color="fg.warning" fontSize="2xl">
-                <SlideNumber value={data.maxTps} />
+                <SlideNumber value={maxTps ?? data.maxTps} />
               </Text>
             </Flex>
             <Separator />

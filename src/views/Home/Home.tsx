@@ -10,33 +10,39 @@ const Home = () => {
       <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} gap={6}>
         <ChainInfoCard
           chainId={ChainID.TESTNET}
-          chainName="Alpha"
+          chainName="1Matrix Alpha"
           description="Permissioned L1 based on Ethereum, PoS consensus: the most popular, reliable, robust & stable blockchain protocol"
+          maxTps={10000}
         />
         <ChainInfoCard
           chainId={ChainID.BCOS}
-          chainName="Beta"
+          chainName="1Matrix Beta"
           description="Permissioned L1 based on Fisco Bcos, rpBFT consensus, one of the fastest blockchains"
+          maxTps={250000}
         />
         <ChainInfoCard
           chainId={ChainID.COSMOS}
-          chainName="Gamma"
+          chainName="1Matrix Gamma"
           description="Public L1 based on Comos SDK, CometBFT consensus: the most customizable blockchain SDK"
+          maxTps={10000}
         />
         <ChainInfoCard
           chainId={ChainID.DEVNET}
-          chainName="Delta"
+          chainName="1Matrix Delta"
           description="Public L1 based on Ethereum, PoS consensus: the most popular, reliable, robust & stable blockchain protocol"
+          maxTps={10000}
         />
         <ChainInfoCard
           chainId={ChainID.QUORUM}
-          chainName="Quorum"
-          // description=""
+          chainName="1Matrix Epsilon"
+          description="Permissioned L1 based on Quorum, qBFT consensus, designed for enterprise and banking"
+          maxTps={1000}
         />
         <ChainInfoCard
           chainId={ChainID.SONIC}
-          chainName="Sonic"
-          // description=""
+          chainName="1Matrix Zeta"
+          description="Public L1 based on Sonic, aBFT consensus,  one of the fastest blockchains with DAG architecture"
+          maxTps={100000}
         />
       </SimpleGrid>
     </Container>
