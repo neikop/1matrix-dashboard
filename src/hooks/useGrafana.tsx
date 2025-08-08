@@ -12,7 +12,7 @@ export const useGrafana = ({ chainId }: Props) => {
   const { data } = useQuery({
     queryFn: () => {
       const initTime = {
-        from: (Date.now() - 6 * 60 * 60 * 1000).toString(),
+        from: (Date.now() - 1 * 60 * 60 * 1000).toString(),
         to: Date.now().toString(),
       }
       const host: Host = chainId === ChainID.COSMOS ? Host.COSMOS : Host.MATRIX
@@ -21,7 +21,8 @@ export const useGrafana = ({ chainId }: Props) => {
           type: "prometheus",
           uid: host === Host.MATRIX ? "PBFA97CFB590B2093" : "deu611bogj1tsb",
         },
-        intervalMs: 60 * 1000,
+        intervalMs: 15 * 1000,
+        utcOffsetSec: 25200,
       }
       return apiClient.post("/api/query", {
         ...initTime,
@@ -36,7 +37,6 @@ export const useGrafana = ({ chainId }: Props) => {
             ...initQuery,
             expr: getQueryExpr(chainId, "blocknumber"),
             refId: "blocknumber",
-            intervalMs: 2 * 1000,
           },
           {
             ...initQuery,
@@ -87,14 +87,14 @@ const getLatestValue = (key: string, result: Result) => {
     }
     if (key === "blocktime") {
       const value = last(result.frames[0].data.values[1]) ?? 0
-      if (value < 0.01) {
+      if (value < 1) {
         return { [key]: value.toFixed(3) }
       }
       return { [key]: new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value) }
     }
     if (key === "finality") {
       const value = last(result.frames[0].data.values[1]) ?? 0
-      if (value < 0.01) {
+      if (value < 1) {
         return { [key]: value.toFixed(3) }
       }
       return { [key]: new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, useGrouping: false }).format(value) }
@@ -155,7 +155,7 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
       [ChainID.QUORUM]:
         'avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="bcos-quorum"}[5m]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="bcos-quorum"}[5m])) / 1000',
       [ChainID.SONIC]:
-        'avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="bcos-testnet-2"}[5m]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="bcos-testnet-2"}[5m])) / 1000',
+        'avg(avg_over_time(block_exec_duration_milliseconds_gauge{chain="bcos-sonic"}[5m]) + avg_over_time(block_commit_duration_milliseconds_gauge{chain="bcos-sonic"}[5m])) / 1000',
     }[chainId]
   }
   return ""
