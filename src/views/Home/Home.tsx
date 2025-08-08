@@ -25,7 +25,7 @@ const Home = () => {
           chainId={ChainID.COSMOS}
           chainName="1Matrix Gamma"
           description="Public L1 based on Comos SDK, CometBFT consensus: the most customizable blockchain SDK"
-          maxTps={100000}
+          maxTps={10000}
           note={7}
         />
         <ChainInfoCard
