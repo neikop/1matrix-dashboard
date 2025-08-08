@@ -25,14 +25,14 @@ const Home = () => {
           chainId={ChainID.COSMOS}
           chainName="1Matrix Gamma"
           description="Public L1 based on Comos SDK, CometBFT consensus: the most customizable blockchain SDK"
-          maxTps={10000}
+          maxTps={100000}
           note={7}
         />
         <ChainInfoCard
           chainId={ChainID.DEVNET}
           chainName="1Matrix Delta"
-          description="Public L1 based on Ethereum, PoS consensus: the most popular, reliable, robust & stable blockchain protocol"
-          maxTps={10000}
+          description="Permissioned L1 based on Hyperledger Fabric, RAFT-based, designed for enterprise"
+          maxTps={20000}
         />
         <ChainInfoCard
           chainId={ChainID.QUORUM}
