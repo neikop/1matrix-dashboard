@@ -131,7 +131,7 @@ const getQueryExpr = (chainId: ChainID, type: "blocknumber" | "blocktime" | "fin
       [ChainID.TESTNET]: `(max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))) / (avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
       [ChainID.BCOS]: `(sum by(chain) (avg_over_time(txpool_tps{chain=\"${chainId}\"}[1h])))`,
       [ChainID.DEVNET]: `(max by(chain) (sum by(instance) (increase(eth_exe_block_head_transactions_in_block{chain="${chainId}"}[1m])))) / (avg(eth_con_spec_seconds_per_slot{chain="${chainId}"}))`,
-      [ChainID.COSMOS]: "avg(cometbft_consensus_num_txs)",
+      [ChainID.COSMOS]: "avg(cometbft_consensus_num_txs) / (avg(cometbft_state_block_processing_time_count) / 1000)",
       [ChainID.QUORUM]: 'sum by(chain) (txpool_tps{chain="bcos-quorum"})',
       [ChainID.SONIC]: 'sum by(chain) (txpool_tps{chain="bcos-sonic"})',
     }[chainId]
