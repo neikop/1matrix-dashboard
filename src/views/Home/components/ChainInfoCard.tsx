@@ -45,9 +45,10 @@ type Props = {
   dataCenters?: number | string
   description?: string
   maxTps?: number
+  note?: number
 }
 
-const ChainInfoCard = ({ chainId, chainName, dataCenters = 3, description, maxTps }: Props) => {
+const ChainInfoCard = ({ chainId, chainName, dataCenters = 3, description, maxTps, note }: Props) => {
   const data = useGrafana({ chainId })
 
   useEffect(() => {
@@ -89,7 +90,7 @@ const ChainInfoCard = ({ chainId, chainName, dataCenters = 3, description, maxTp
       <Card.Body>
         <Stack gap={6}>
           <SimpleGrid columns={{ base: 1, lg: 4 }} gap={2}>
-            <InfoGridItem colSpan={1} label="Nodes" value={data.node} valueProps={{ color: "fg.success" }} />
+            <InfoGridItem colSpan={1} label="Nodes" value={note ?? data.node} valueProps={{ color: "fg.success" }} />
             <InfoGridItem colSpan={1} label="Data Centers" value={dataCenters} />
             <InfoGridItem
               colSpan={2}
